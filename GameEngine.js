@@ -43,7 +43,7 @@ processArgs();
 init();
 loadScene(sceneURL);
 animate();
-
+//
 //----------------------------------------------------------------------//
 // PROCESSES THE URL ARGUMENTS, WHICH SHOULD CONTAIN THE SCENE URL
 //----------------------------------------------------------------------//
