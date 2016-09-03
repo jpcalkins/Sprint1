@@ -43,11 +43,10 @@ processArgs();
 init();
 loadScene(sceneURL);
 animate();
-//
-//----------------------------------------------------------------------//
-// PROCESSES THE URL ARGUMENTS, WHICH SHOULD CONTAIN THE SCENE URL
-//----------------------------------------------------------------------//
 
+/**
+ * Processes the URL arguments, which should contain the scene URL. Otherwise, it automatically loads the scene at {String} sceneURL.
+ */
 function processArgs()
 {
     var href = window.location.href;
@@ -72,11 +71,9 @@ function processArgs()
     }
 }
 
-//----------------------------------------------------------------------//
-// PERFORM GENERAL INITIALIZATION. CREATE THE RENDERER AND LOADING
-// MANAGER, AND START LISTENING TO GUI EVENTS.
-//----------------------------------------------------------------------//
-
+/**
+ * Performs general initialization. Creates the renderer and loading manager, and starts listening to the GUI events.
+ */
 function init()
 {
     debug("init\n");
@@ -308,6 +305,7 @@ function parseSceneNode(jsonNode, sceneNode)
 
     if ("children" in jsonNode)
     {
+        var light;
         var children = jsonNode["children"];
         for (var i=0; i<children.length; i++)
         {
@@ -324,13 +322,27 @@ function parseSceneNode(jsonNode, sceneNode)
                 sceneNode.add(camera);
                 if (currentCamera === undefined) currentCamera = camera;
                 parseSceneNode(childJsonNode, camera);
-            }
-            else if (childType == "directionalLight") {
-                var light = parseDirectionalLight(childJsonNode);
+            }else if (childType == "directionalLight") {
+                light = parseDirectionalLight(childJsonNode);
                 sceneNode.add(light);
                 parseSceneNode(childJsonNode, light);
-            }
-            else if (childType == "mesh") {
+            }else if(childType == "ambientLight"){
+                light = parseAmbientLight(childJsonNode);
+                sceneNode.add(light);
+                parseSceneNode(childJsonNode, light);
+            }else if(childType == "pointLight"){
+                light = parsePointLight(childJsonNode);
+                sceneNode.add(light);
+                parseSceneNode(childJsonNode, light);
+            }else if(childType == "hemisphereLight"){
+                light = parseHemisphereLight(childJsonNode);
+                sceneNode.add(light);
+                parseSceneNode(childJsonNode, light);
+            }else if(childType == "spotLight"){
+                light = parseSpotLight(childJsonNode);
+                sceneNode.add(light);
+                parseSceneNode(childJsonNode, light);
+            }else if (childType == "mesh") {
                 var mesh = parseMesh(childJsonNode);
                 sceneNode.add(mesh);
                 parseSceneNode(childJsonNode, mesh);
@@ -420,6 +432,105 @@ function parseDirectionalLight(jsonNode)
     var c = new THREE.Color(color[0], color[1], color[2]);
     var light = new THREE.DirectionalLight( c );
     light.position.set( position[0], position[1], position[2] );
+    return light;
+}
+
+/**
+ * Parses an ambient light node from JSON.
+ * @param jsonNode Node to parse.
+ * @returns {THREE.AmbientLight} Initialized ambientLight object.
+ */
+function parseAmbientLight(jsonNode){
+    //Default color in RGB
+    var color = [1.0, 1.0, 1.0];
+    var intensity = 1.0;
+    var position = [0, 1.0, 0];
+
+    //Replaces default values with jsonNode values if defined.
+    if("color" in jsonNode) color = jsonNode["color"];
+    if("intensity" in jsonNode) intensity = jsonNode["intensity"];
+    if("position" in jsonNode) position = jsonNode["position"];
+
+    var c = new THREE.Color(color[0], color[1], color[2]);
+    var light = new THREE.AmbientLight(c, intensity);
+    light.position.set(position[0], position[1], position[2]);
+    return light;
+
+}
+
+/**
+ * Parses a point light node from JSON.
+ * @param jsonNode Node to parse.
+ * @returns {THREE.PointLight} Initialized pointLight object.
+ */
+function parsePointLight(jsonNode){
+    //Default color in RGB
+    var color = [1.0, 1.0, 1.0];
+    var intensity = 1.0;
+    var distance = 0;
+    var position = [0, 1.0, 0];
+
+    //Replaces default values with jsonNode values if defined.
+    if("color" in jsonNode) color = jsonNode["color"];
+    if("intensity" in jsonNode) intensity = jsonNode["intensity"];
+    if("distance" in jsonNode) distance = jsonNode["distance"];
+    if("position" in jsonNode) position = jsonNode["position"];
+
+    var c = new THREE.Color(color[0], color[1], color[2]);
+    var light = new THREE.PointLight(c, intensity, distance);
+    light.position.set(position[0], position[1], position[2]);
+
+    return light;
+}
+
+/**
+ * Parses a hemisphere light node from JSON.
+ * @param jsonNode Node to parse.
+ * @returns {THREE.HemisphereLight} Initialized hemisphereLight object.
+ */
+function parseHemisphereLight(jsonNode){
+    //Default color in RGB
+    var skyColor = [1.0, 1.0, 1.0];
+    var intensity = 1.0;
+    var groundColor = 0;
+    var position = [0, 1.0, 0];
+
+    //Replaces default values with jsonNode values if defined.
+    if("color" in jsonNode) skyColor = jsonNode["skyColor"];
+    if("intensity" in jsonNode) intensity = jsonNode["intensity"];
+    if("distance" in jsonNode) groundColor = jsonNode["groundColor"];
+    if("position" in jsonNode) position = jsonNode["position"];
+
+    var sky = new THREE.Color(skyColor[0], skyColor[1], skyColor[2]);
+    var ground = new THREE.Color(groundColor[0], groundColor[1], groundColor[2]);
+    var light = new THREE.PointLight(sky, ground, intensity);
+    light.position.set(position[0], position[1], position[2]);
+
+    return light;
+}
+
+/**
+ * Parses a spot light node from JSON.
+ * @param jsonNode Nde to parse
+ * @returns {THREE.SpotLight} Initialized spotLight object.
+ */
+function parseSpotLight(jsonNode){
+    //Default color in RGB
+    var color = [1.0, 1.0, 1.0];
+    var intensity = 1.0;
+    var distance = 0;
+    var position = [0, 1.0, 0];
+
+    //Replaces default values with jsonNode values if defined.
+    if("color" in jsonNode) color = jsonNode["color"];
+    if("intensity" in jsonNode) intensity = jsonNode["intensity"];
+    if("distance" in jsonNode) distance = jsonNode["distance"];
+    if("position" in jsonNode) position = jsonNode["position"];
+
+    var c = new THREE.Color(color[0], color[1], color[2]);
+    var light = new THREE.SpotLight(c, intensity, distance);
+    light.position.set(position[0], position[1], position[2]);
+
     return light;
 }
 
