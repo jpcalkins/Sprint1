@@ -65,10 +65,10 @@ function processArgs()
     }
 
     if (sceneURL === undefined) {
-        sceneURL = "sprint0b.json"
+        sceneURL = "sprint0a.json";
         DEBUG = true;
         debug("No scene specified\n");
-        debug("Use: .../cs4143engine0.html?url=sceneURL\n");
+        debug("Use: .../index.html?url=sceneURL\n");
     }
 }
 
