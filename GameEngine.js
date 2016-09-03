@@ -444,16 +444,13 @@ function parseAmbientLight(jsonNode){
     //Default color in RGB
     var color = [1.0, 1.0, 1.0];
     var intensity = 1.0;
-    var position = [0, 1.0, 0];
 
     //Replaces default values with jsonNode values if defined.
     if("color" in jsonNode) color = jsonNode["color"];
     if("intensity" in jsonNode) intensity = jsonNode["intensity"];
-    if("position" in jsonNode) position = jsonNode["position"];
 
     var c = new THREE.Color(color[0], color[1], color[2]);
     var light = new THREE.AmbientLight(c, intensity);
-    light.position.set(position[0], position[1], position[2]);
     return light;
 
 }
