@@ -601,22 +601,28 @@ function parseMesh(jsonNode)
 
 function parseMaterial(jsonNode)
 {
+    var dColor = "diffuseColor";
+    var dMap = "diffuseMap";
+
     //debug("parseMaterial\n");
-    if (jsonNode === undefined) return new MeshLambertMaterial();
+    var material = new THREE.MeshLambertMaterial();
+    if (jsonNode === undefined) return material;
     var type = jsonNode["type"];
 
     // Lambertian material
     if (type == "meshLambertMaterial")
     {
-        var material = new THREE.MeshLambertMaterial();
-        if ("diffuseColor" in jsonNode) {
-            var d = jsonNode["diffuseColor"];
+        if (dColor in jsonNode) {
+            var d = jsonNode[dColor];
             material.color = new THREE.Color(d[0], d[1], d[2]);
         }
-        if ("diffuseMap" in jsonNode) {
-            var tex = parseTexture( jsonNode["diffuseMap"] );
-            material.map = tex;
-        }
+        if (dMap in jsonNode) material.map = parseTexture(jsonNode[dMap]);
+
+        return material;
+    }else if(type == "meshBasicMaterial"){
+        if("color" in jsonNode) material.color = new THREE.Color(jsonNode["color"][0], jsonNode["color"][1], jsonNode["color"][2]);
+        if("map" in jsonNode) material.map = parseTexture(jsonNode["map"]);
+
         return material;
     }
 
