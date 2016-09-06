@@ -1,5 +1,4 @@
 # Game engine built with three.js that parses JSON files to set up scenes.
-# Sprint1
 Expansion of game engine built with Three.js. Implements additional light sources and materials.
 
 <h2 id="sprint-1-lights-and-basic-materials"><a name="user-content-sprint-1-lights-and-basic-materials" href="#sprint-1-lights-and-basic-materials" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Sprint 1: Lights and Basic Materials</h2>
