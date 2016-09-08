@@ -484,6 +484,7 @@ function parsePointLight(jsonNode){
     if("distance" in jsonNode) distance = jsonNode["distance"];
     if("position" in jsonNode) position = jsonNode["position"];
 
+
     var c = new THREE.Color(color[0], color[1], color[2]);
     var light = new THREE.PointLight(c, intensity, distance);
     light.position.set(position[0], position[1], position[2]);
@@ -528,16 +529,24 @@ function parseSpotLight(jsonNode){
     var intensity = 1.0;
     var distance = 0;
     var position = [0, 1.0, 0];
+    var angle = Math.PI/2;
+    var penumbra = 0;
+    var decay = 1;
 
     //Replaces default values with jsonNode values if defined.
     if("color" in jsonNode) color = jsonNode["color"];
     if("intensity" in jsonNode) intensity = jsonNode["intensity"];
     if("distance" in jsonNode) distance = jsonNode["distance"];
     if("position" in jsonNode) position = jsonNode["position"];
+    if("angle" in jsonNode) angle = jsonNode["angle"];
+    if("penumbra" in jsonNode) penumbra = jsonNode["penumbra"];
+    if("decay" in jsonNode) decay = jsonNode["decay"];
+
 
     var c = new THREE.Color(color[0], color[1], color[2]);
-    var light = new THREE.SpotLight(c, intensity, distance);
+    var light = new THREE.SpotLight(c, intensity, distance, angle, penumbra, decay);
     light.position.set(position[0], position[1], position[2]);
+    if("castShadow" in jsonNode) light.castShadow = jsonNode["castShadow"];
 
     return light;
 }
@@ -565,6 +574,7 @@ function parseMesh(jsonNode)
         if ("height" in jsonNode) height = jsonNode["height"];
         if ("depth"  in jsonNode) depth  = jsonNode["depth"];
         geometry = new THREE.BoxGeometry(width, height, depth);
+        geometry.receiveShadow = true;
     }
     else if (geometryType == "sphere") {
         var radius = 1;
@@ -600,9 +610,10 @@ function parseMesh(jsonNode)
         if("heightSegments" in jsonNode) heightSegments = jsonNode["heightSegments"];
         geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments);
     }
-
     // Create the mesh and return it
     var mesh = new THREE.Mesh( geometry, material );
+    if("receiveShadow" in jsonNode) mesh.receiveShadow = jsonNode["receiveShadow"];
+    if("castShadow" in jsonNode) mesh.castShadow = jsonNode["castShadow"];
     return mesh;
 }
 
