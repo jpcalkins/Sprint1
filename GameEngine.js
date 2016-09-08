@@ -10,7 +10,7 @@ var ZAXIS = new THREE.Vector3(0,0,1);
 var DEBUG = true; 		// Whether to run in debug mode
 var startTime = 0; 		// When the scene was loaded (in seconds)
 
-var sceneURL;           // URL of the scene to be loaded
+var sceneURL = "";           // URL of the scene to be loaded
 var sceneFolder;        // Subfolder containing scene files.
 
 var rendererContainer;	// A div element that will hold the renderer
@@ -60,14 +60,15 @@ function processArgs()
             sceneURL = arg[1];
         }
         else if (arg[0] == 'debug') {
-            if (arg[1] == 'true') DEBUG = true;
-            else DEBUG = false;
+            DEBUG = (arg[1] === 'true');
+            // if (arg[1] == 'true') DEBUG = true;
+            // else DEBUG = false;
         }
     }
     if(sceneURL.indexOf("/") > -1){
         sceneFolder = sceneURL.substring(0, sceneURL.lastIndexOf("/")+1);
     }
-    if (sceneURL === undefined) {
+    if (sceneURL === "") {
         sceneURL = "sprint0a.json";
         DEBUG = true;
         debug("No scene specified\n");
@@ -214,8 +215,8 @@ function debug(message)
 function getElapsedTime()
 {
     var d = new Date();
-    var t = d.getTime() * 0.001 - startTime;
-    return t;
+    d = d.getTime() * 0.001 - startTime;
+    return d;
 }
 
 //----------------------------------------------------------------------//
@@ -305,7 +306,7 @@ function parseSceneNode(jsonNode, sceneNode)
 
     // Whether the node starts out as visible.
     if ("visible" in jsonNode) {
-        sceneNode.setVisible(jsonNode["visible"]);
+        sceneNode.visible(jsonNode["visible"]);
     }
 
     // Traverse all the child nodes. The typical code pattern here is:
@@ -461,8 +462,7 @@ function parseAmbientLight(jsonNode){
     if("intensity" in jsonNode) intensity = jsonNode["intensity"];
 
     var c = new THREE.Color(color[0], color[1], color[2]);
-    var light = new THREE.AmbientLight(c, intensity);
-    return light;
+    return new THREE.AmbientLight(c, intensity);
 
 }
 
@@ -512,7 +512,7 @@ function parseHemisphereLight(jsonNode){
 
     var sky = new THREE.Color(skyColor[0], skyColor[1], skyColor[2]);
     var ground = new THREE.Color(groundColor[0], groundColor[1], groundColor[2]);
-    var light = new THREE.PointLight(sky, ground, intensity);
+    var light = new THREE.HemisphereLight(sky, ground, intensity);
     light.position.set(position[0], position[1], position[2]);
 
     return light;
@@ -558,6 +558,9 @@ function parseSpotLight(jsonNode){
 function parseMesh(jsonNode)
 {
     //debug("parseMesh\n");
+    var height = 2;
+    var radius = 1;
+    var heightSegments = 10;
 
     // Get the material
     var material = parseMaterial(jsonNode["material"]);
@@ -568,7 +571,6 @@ function parseMesh(jsonNode)
 
     if (geometryType == "cube") {
         var width = 2;
-        var height = 2;
         var depth = 2;
         if ("width"  in jsonNode) width  = jsonNode["width"];
         if ("height" in jsonNode) height = jsonNode["height"];
@@ -577,15 +579,12 @@ function parseMesh(jsonNode)
         geometry.receiveShadow = true;
     }
     else if (geometryType == "sphere") {
-        var radius = 1;
         var widthSegments = 8;
-        var heightSegments = 6;
         if ("radius"         in jsonNode) radius         = jsonNode["radius"];
         if ("widthSegments"  in jsonNode) widthSegments  = jsonNode["widthSegments"];
         if ("heightSegments" in jsonNode) heightSegments = jsonNode["heightSegments"];
         geometry = new THREE.SphereGeometry(radius, heightSegments, widthSegments);
     }else if(geometryType == "donut"){
-        var radius = 1;
         var tube = 0.5;
         var radialSegments = 80;
         var tubularSegments = 60;
@@ -600,9 +599,7 @@ function parseMesh(jsonNode)
     }else if(geometryType == "tube"){
         var radiusTop = 1;
         var radiusBottom = 1;
-        var height = 3;
         var radiusSegments = 10;
-        var heightSegments = 10;
         if("radiusTop" in jsonNode) radiusTop = jsonNode["radiusTop"];
         if("radiusBottom" in jsonNode) radiusBottom = jsonNode["radiusBottom"];
         if("height" in jsonNode) height = jsonNode["height"];
