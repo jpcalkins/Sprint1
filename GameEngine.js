@@ -11,6 +11,8 @@ var DEBUG = true; 		// Whether to run in debug mode
 var startTime = 0; 		// When the scene was loaded (in seconds)
 
 var sceneURL;           // URL of the scene to be loaded
+var sceneFolder;        // Subfolder containing scene files.
+
 var rendererContainer;	// A div element that will hold the renderer
 var loadingManager;		// loading manager
 
@@ -62,7 +64,9 @@ function processArgs()
             else DEBUG = false;
         }
     }
-
+    if(sceneURL.indexOf("/") > -1){
+        sceneFolder = sceneURL.substring(0, sceneURL.lastIndexOf("/")+1);
+    }
     if (sceneURL === undefined) {
         sceneURL = "sprint0a.json";
         DEBUG = true;
@@ -96,6 +100,9 @@ function init()
     renderer.setSize( windowWidth, windowHeight );
     rendererContainer.appendChild( renderer.domElement );
     currentRenderer = renderer;
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Add event listeners so we can respond to events
     window.addEventListener( 'resize', onWindowResize, false );
@@ -266,6 +273,10 @@ function parseSceneNode(jsonNode, sceneNode)
     // to the current node, just files that contain code.)
     if ("scriptFiles" in jsonNode) {
         var scriptList = jsonNode["scriptFiles"];
+        scriptList = scriptList.map(function (e) {
+            e = sceneFolder + e;
+            return e;
+        });
         for (var i=0; i<scriptList.length; i++) {
             var scriptURL = scriptList[i];
             loadScript(scriptURL);
@@ -603,6 +614,7 @@ function parseMaterial(jsonNode)
 {
     var dColor = "diffuseColor";
     var dMap = "diffuseMap";
+    var sColor = "specularColor";
 
     //debug("parseMaterial\n");
     var material = new THREE.MeshLambertMaterial();
@@ -612,22 +624,31 @@ function parseMaterial(jsonNode)
     // Lambertian material
     if (type == "meshLambertMaterial")
     {
-        if (dColor in jsonNode) {
-            var d = jsonNode[dColor];
-            material.color = new THREE.Color(d[0], d[1], d[2]);
-        }
+        if (dColor in jsonNode) material.color = new THREE.Color(jsonNode[dColor][0], jsonNode[dColor][1], jsonNode[dColor][2]);
         if (dMap in jsonNode) material.map = parseTexture(jsonNode[dMap]);
 
         return material;
     }else if(type == "meshBasicMaterial"){
+        material = new THREE.MeshBasicMaterial();
         if("color" in jsonNode) material.color = new THREE.Color(jsonNode["color"][0], jsonNode["color"][1], jsonNode["color"][2]);
         if("map" in jsonNode) material.map = parseTexture(jsonNode["map"]);
+
+        return material;
+    }else if(type="meshPhongMaterial"){
+        material = new THREE.MeshPhongMaterial();
+        if(dColor in jsonNode) material.color = new THREE.Color(jsonNode[dColor][0], jsonNode[dColor][1], jsonNode[dColor][2]);
+        if(sColor in jsonNode) material.specular = new THREE.Color(jsonNode[sColor][0], jsonNode[sColor][1], jsonNode[sColor][2]);
+        if("specularMap" in jsonNode) material.specularMap = parseTexture(jsonNode["specularMap"]);
+        if("shininess" in jsonNode) material.shininess = jsonNode["shininess"];
+        if("diffuseMap" in jsonNode) material.map = parseTexture(jsonNode["diffuseMap"]);
+        if("bumpMap" in jsonNode) material.bumpMap = parseTexture(jsonNode["bumpMap"]);
+        if("bumpScale" in jsonNode) material.bumpScale = jsonNode["bumpScale"];
 
         return material;
     }
 
     // Failed to make a material, so return a default
-    return new MeshLambertMaterial();
+    return new THREE.MeshLambertMaterial();
 }
 
 //----------------------------------------------------------------------//
@@ -636,9 +657,10 @@ function parseMaterial(jsonNode)
 
 function parseTexture(textureURL)
 {
+    textureURL = sceneFolder+textureURL;
     //debug("parseTexture: " + textureURL + "\n");
     var texture = new THREE.Texture();
-    var loader = new THREE.ImageLoader(manager);
+    var loader = new THREE.ImageLoader(loadingManager);
     loader.load(
         textureURL,
         function(image) { // callback function
@@ -646,6 +668,7 @@ function parseTexture(textureURL)
             texture.needsUpdate = true;
         }
     );
+    texture.anisotropy = currentRenderer.getMaxAnisotropy();
     return texture;
 }
 

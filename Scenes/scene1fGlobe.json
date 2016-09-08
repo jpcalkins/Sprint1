@@ -2,7 +2,7 @@
 "COMMENT": "Globe with a few lights",
 "type": "node",
 "name": "rootNode",
-"scriptFiles": [ "scene1fscript.js" ],
+"scriptFiles": [ "Scenes/scene1fscript.js" ],
 
 "children":
 [
