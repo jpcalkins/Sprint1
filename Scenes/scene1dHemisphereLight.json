@@ -28,6 +28,8 @@
 		"geometry": "sphere",
 		"widthSegments": 32,
 		"heightSegments": 16,
+		"castShadow": true,
+		"receiveShadow": true,
 		"material": 
 		{
 			"type": "meshPhongMaterial",
@@ -45,6 +47,8 @@
 		"geometry": "sphere",
 		"widthSegments": 32,
 		"heightSegments": 16,
+		"castShadow": true,
+		"receiveShadow": true,
 		"material": 
 		{
 			"type": "meshPhongMaterial",
@@ -62,6 +66,8 @@
 		"geometry": "sphere",
 		"widthSegments": 32,
 		"heightSegments": 16,
+		"castShadow": true,
+		"receiveShadow": true,
 		"material": 
 		{
 			"type": "meshPhongMaterial",

@@ -43,7 +43,7 @@
 		"geometry": "sphere",
 		"widthSegments": 32,
 		"heightSegments": 16,
-		"material": 
+		"material":
 		{
 			"type": "meshPhongMaterial",
 			"name": "sm2",
@@ -60,6 +60,7 @@
 		"geometry": "sphere",
 		"widthSegments": 32,
 		"heightSegments": 16,
+		"castShadow": true,
 		"material": 
 		{
 			"type": "meshBasicMaterial",

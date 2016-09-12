@@ -505,9 +505,9 @@ function parseHemisphereLight(jsonNode){
     var position = [0, 1.0, 0];
 
     //Replaces default values with jsonNode values if defined.
-    if("color" in jsonNode) skyColor = jsonNode["skyColor"];
+    if("skyColor" in jsonNode) skyColor = jsonNode["skyColor"];
     if("intensity" in jsonNode) intensity = jsonNode["intensity"];
-    if("distance" in jsonNode) groundColor = jsonNode["groundColor"];
+    if("groundColor" in jsonNode) groundColor = jsonNode["groundColor"];
     if("position" in jsonNode) position = jsonNode["position"];
 
     var sky = new THREE.Color(skyColor[0], skyColor[1], skyColor[2]);
