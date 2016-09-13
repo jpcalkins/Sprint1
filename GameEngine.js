@@ -173,6 +173,10 @@ function onMouseMove(event)
         mouseMoveEvent(mouseX, mouseY);
     }
 }
+/**
+ * Handles touch move events if the touchMoveEvent(xPos, yPos) exists in scene file.
+ * @param event touch event.
+ */
 function onTouchMove(event){
     var xPos = event.touches[0].pageX;
     var yPos = event.touches[0].pageY;
@@ -209,10 +213,10 @@ function onKeyUp(event)
     //debug("onKeyDown " + key + "\n");
 }
 
-//----------------------------------------------------------------------//
-// PRINT A DEBUG MESSAGE
-//----------------------------------------------------------------------//
-
+/**
+ * Prints debug messages in upper-left corner of scene.
+ * @param message
+ */
 function debug(message)
 {
     if (DEBUG)
@@ -223,9 +227,10 @@ function debug(message)
     console.log(message);
 }
 
-//----------------------------------------------------------------------//
-// GET THE ELAPSED TIME (SINCE THE PAGE LOADED) IN SECONDS
-//----------------------------------------------------------------------//
+/**
+ * Gets elapsed time since scene started.
+ * @returns {Date}
+ */
 
 function getElapsedTime()
 {

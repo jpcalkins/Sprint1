@@ -1,5 +1,5 @@
 {
-  "COMMENT": "Globe with a few lights",
+  "COMMENT": "Moving eye that follows your mouse",
   "type": "node",
   "name": "rootNode",
   "scriptFiles": [ "sprint1aScript.js" ],
@@ -46,11 +46,6 @@
         "bumpMap": "eyeTexture.jpeg",
         "bumpScale": 0.01,
         "shininess": 25
-      },
-      "userData":
-      {
-        "scripts": ["rotateScript"],
-        "rotationSpeed": 0.5
       }
     }
   ]
