@@ -9,6 +9,9 @@ var ZAXIS = new THREE.Vector3(0,0,1);
 
 var DEBUG = true; 		// Whether to run in debug mode
 var startTime = 0; 		// When the scene was loaded (in seconds)
+var frameStartTime = 0;
+var frameDuration = 0;
+var frameNum = 0;
 
 var sceneURL = "";           // URL of the scene to be loaded
 var sceneFolder;        // Subfolder containing scene files.
@@ -271,9 +274,9 @@ function parseScene(jsonParseTree)
     debug("parseScene\n");
 
     var scene = new THREE.Scene();
+    currentScene = scene;
     parseSceneNode(jsonParseTree, scene);
     startTime = (new Date()).getTime() * 0.001; // reset start time
-    currentScene = scene;
 }
 
 //----------------------------------------------------------------------//
@@ -758,6 +761,11 @@ function animateFrame()
     mousePrevX = mouseX;
     mousePrevY = mouseY;
     mousePrevScroll =  mouseScroll;
+
+    var t = getElapsedTime();
+    frameDuration = t - frameStartTime;
+    frameStartTime = t;
+    frameNum++;
 }
 
 //----------------------------------------------------------------------//

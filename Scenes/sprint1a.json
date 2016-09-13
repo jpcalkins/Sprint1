@@ -24,8 +24,8 @@
       "type": "pointLight",
       "name": "plight",
       "color": [1, 1, 1],
-      "intensity": 1,
-      "position": [0, 4, 12]
+      "intensity": 0.8,
+      "position": [0, 0, 12]
     },
     {
       "type": "mesh",
@@ -42,10 +42,10 @@
         "name": "eye",
         "diffuseColor": [1, 1, 1],
         "specularColor": [0.1, 0.1, 0.1],
-        "diffuseMap": "eyeTexture.jpeg",
-        "bumpMap": "eyeTexture.jpeg",
-        "bumpScale": 0.01,
-        "shininess": 25
+        "diffuseMap": "eyeTexture2.jpg",
+        "bumpMap": "eyeTexture2.jpg",
+        "bumpScale": -0.015,
+        "shininess": 200
       }
     }
   ]
