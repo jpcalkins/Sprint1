@@ -1,0 +1,57 @@
+{
+  "COMMENT": "Globe with a few lights",
+  "type": "node",
+  "name": "rootNode",
+  "scriptFiles": [ "sprint1aScript.js" ],
+
+  "children":
+  [
+    {
+      "type": "perspectiveCamera",
+      "name": "camera1",
+      "eye": [0, 0, 12],
+      "center": [0, 0, 0],
+      "vup": [0, 1, 0],
+      "fov": 28
+    },
+    {
+      "type": "ambientLight",
+      "name": "alight",
+      "color": [1, 1, 1],
+      "intensity": 0.2
+    },
+    {
+      "type": "pointLight",
+      "name": "plight",
+      "color": [1, 1, 1],
+      "intensity": 1,
+      "position": [0, 4, 12]
+    },
+    {
+      "type": "mesh",
+      "name": "myEye",
+      "scale": [2, 2, 2],
+      "translate": [0, 0, 0],
+      "geometry": "sphere",
+      "widthSegments": 64,
+      "heightSegments": 64,
+      "MatCap": true,
+      "material":
+      {
+        "type": "meshPhongMaterial",
+        "name": "eye",
+        "diffuseColor": [1, 1, 1],
+        "specularColor": [0.1, 0.1, 0.1],
+        "diffuseMap": "eyeTexture.jpeg",
+        "bumpMap": "eyeTexture.jpeg",
+        "bumpScale": 0.01,
+        "shininess": 25
+      },
+      "userData":
+      {
+        "scripts": ["rotateScript"],
+        "rotationSpeed": 0.5
+      }
+    }
+  ]
+}

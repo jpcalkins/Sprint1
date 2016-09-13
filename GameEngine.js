@@ -40,6 +40,8 @@ var currentRenderer;	// The current renderer used to render the scene
 //set as true after first scene rendered. Allows the definition of an afterLoad method.
 var sceneLoaded = false;
 
+var isMouseDown = false;
+
 // INITIALIZATION AND STARTUP (EXECUTES WHEN PAGE LOADS)
 processArgs();
 init();
@@ -113,6 +115,7 @@ function init()
     document.addEventListener( 'mousemove', onMouseMove, false );
     document.addEventListener( 'mousewheel', onMouseWheel, false);
     document.addEventListener( 'DOMMouseScroll', onMouseWheel, false); // firefox
+    document.addEventListener('touchmove', onTouchMove, false);
     //
     window.onkeydown = onKeyDown;
     window.onkeyup = onKeyUp;
@@ -141,6 +144,7 @@ function onMouseUp(event)
 {
     //debug("onMouseUp\n");
     mouseDown = 0;
+    isMouseDown = false;
     //allows you to define a mouseUpEvent method to be called in scene files instead of having to be defined in engine.
     if(typeof(mouseUpEvent) == "function"){
         mouseUpEvent(event);
@@ -151,6 +155,7 @@ function onMouseDown(event)
 {
     //debug("onMouseDown " + event.which + "\n");
     mouseDown = event.which;
+    isMouseDown = true;
     //allows you to define a mouseDownEvent method to be called in scene files instead of having to be defined in engine.
     if(typeof(mouseDownEvent) == "function"){
         mouseDownEvent(event);
@@ -164,6 +169,16 @@ function onMouseMove(event)
     //mousePrevY = mouseY;
     mouseX = event.clientX;
     mouseY = event.clientY;
+    if(typeof(mouseMoveEvent) == "function"){
+        mouseMoveEvent(mouseX, mouseY);
+    }
+}
+function onTouchMove(event){
+    var xPos = event.touches[0].pageX;
+    var yPos = event.touches[0].pageY;
+    if(typeof(touchMoveEvent) == "function"){
+        touchMoveEvent(xPos, yPos);
+    }
 }
 
 function onMouseWheel(event)
@@ -606,6 +621,20 @@ function parseMesh(jsonNode)
         if("radiusSegments" in jsonNode) radiusSegments = jsonNode["radiusSegments"];
         if("heightSegments" in jsonNode) heightSegments = jsonNode["heightSegments"];
         geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments);
+    }
+    if("MatCap" in jsonNode){
+        // modify UVs to accommodate MatCap texture
+        var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
+        for (var i=0; i<faceVertexUvs.length; i++) {
+
+            var uvs = faceVertexUvs[i];
+            var face = geometry.faces[i];
+
+            for (var j=0; j<3; j++) {
+                uvs[j].x = face.vertexNormals[j].x * 0.5 + 0.5;
+                uvs[j].y = face.vertexNormals[j].y * 0.5 + 0.5;
+            }
+        }
     }
     // Create the mesh and return it
     var mesh = new THREE.Mesh( geometry, material );

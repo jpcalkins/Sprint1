@@ -37,7 +37,7 @@
 			"specularColor": [0.04, 0.04, 0.04],
 			"diffuseMap": "earth2k.jpg",
 			"bumpMap": "earth2k.jpg",
-			"bumpScale": 0.01,
+			"bumpScale": 0.03,
 			"shininess": 200
 		},
 		"userData": 
